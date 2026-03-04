@@ -3,6 +3,7 @@ import { fetchProjects, createProject } from "../api/projectApi";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     client_id: "",
@@ -16,8 +17,10 @@ const Projects = () => {
   }, []);
 
   const loadProjects = async () => {
+    setLoading(true);
     const data = await fetchProjects();
     setProjects(data);
+    setLoading(false);
   };
 
   const handleChange = (e) => {
@@ -90,6 +93,8 @@ const Projects = () => {
       <div className="projects-section">
         <h2>Projects List</h2>
 
+        {loading && <p>Loading projects...</p>}
+
         <table>
           <thead>
             <tr>
@@ -102,15 +107,21 @@ const Projects = () => {
           </thead>
 
           <tbody>
-            {projects.map((p) => (
-              <tr key={p.project_id}>
-                <td>{p.project_id}</td>
-                <td>{p.client_id}</td>
-                <td>{p.project_name}</td>
-                <td>{p.start_date}</td>
-                <td>{p.end_date}</td>
+            {projects.length === 0 ? (
+              <tr>
+                <td colSpan="5">No projects found</td>
               </tr>
-            ))}
+            ) : (
+              projects.map((p) => (
+                <tr key={p.project_id}>
+                  <td>{p.project_id}</td>
+                  <td>{p.client_id}</td>
+                  <td>{p.project_name}</td>
+                  <td>{p.start_date}</td>
+                  <td>{p.end_date}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
